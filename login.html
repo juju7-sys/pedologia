@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login da Profissional - Espaço dos Pés</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+
+    <div class="modal-content" style="max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 16px; display: block; position: static;">
+        <div class="modal-header" style="margin-bottom: 15px;">
+            <div>
+                <span style="font-size: 11px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase;">Painel Restrito</span>
+                <h3>Acesso da Profissional</h3>
+            </div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Entre com seu e-mail e senha cadastrados no Supabase.</p>
+
+        <form id="formLogin">
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="emailLogin" class="form-control" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="senhaLogin" class="form-control" placeholder="Sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnLogin">Entrar no painel</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="font-size: 13px; color: var(--sage-dark); text-decoration: none;">← Voltar para o site</a>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://uxwudralertyohnwcgj.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ADjn65Fdf72YQIU4ivP0sQ_HG8Yw...';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+        const form = document.getElementById('formLogin');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailLogin').value;
+            const senha = document.getElementById('senhaLogin').value;
+            const btn = document.getElementById('btnLogin');
+
+            btn.textContent = 'Entrando...';
+            btn.disabled = true;
+
+            // Autenticação oficial pelo Supabase Auth
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: senha,
+            });
+
+            if (error) {
+                alert('Erro ao entrar: E-mail ou senha incorretos.');
+                btn.textContent = 'Entrar no painel';
+                btn.disabled = false;
+            } else {
+                // Login bem-sucedido, redireciona para a página do painel
+                window.location.href = 'painel.html';
+            }
+        });
+    </script>
+</body>
+</html>

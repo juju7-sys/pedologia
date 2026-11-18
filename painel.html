@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Agendamentos - Espaço dos Pés</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .painel-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .agendamento-card {
+            background: var(--white);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 4px solid var(--sage-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .agendamento-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+        .agendamento-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .data-badge {
+            background: var(--sage-light);
+            color: var(--sage-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="painel-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <span class="section-subtitle" style="text-align: left; display: block;">Administração</span>
+                <h2 style="font-family: serif; margin: 0; font-size: 24px;">Agendamentos</h2>
+            </div>
+            <button onclick="sair()" class="btn-outline" style="width: auto; padding: 8px 16px; margin: 0; font-size: 13px;">Sair ↗</button>
+        </div>
+
+        <div id="listaAgendamentos">
+            <p style="text-align: center; color: var(--text-muted);">Carregando agendamentos...</p>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://uxwudralertyohnwcgj.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ADjn65Fdf72YQIU4ivP0sQ_HG8Yw...';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+        // Verifica se a profissional está logada
+        async function verificarSessao() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                // Se não estiver logada, manda de volta para a tela de login
+                window.location.href = 'login.html';
+            } else {
+                carregarListaAgendamentos();
+            }
+        }
+
+        async function carregarListaAgendamentos() {
+            const container = document.getElementById('listaAgendamentos');
+            
+            // Busca todos os agendamentos no banco ordenados por data/hora
+            const { data, error } = await supabaseClient
+                .from('agendamentos')
+                .select('*')
+                .order('data_hora', { ascending: true });
+
+            if (error) {
+                container.innerHTML = '<p style="text-align: center; color: red;">Erro ao carregar agendamentos.</p>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Nenhum agendamento cadastrado no momento.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('agendamento-card');
+
+                card.innerHTML = `
+                    <div class="agendamento-info">
+                        <h4>${item.nome}</h4>
+                        <p>📱 WhatsApp: ${item.telefone}</p>
+                    </div>
+                    <div class="data-badge">${item.data_hora}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function sair() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        // Executa a verificação ao abrir a página
+        verificarSessao();
+    </script>
+</body>
+</html>

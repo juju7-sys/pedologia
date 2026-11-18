@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espaço dos Pés & Podologia</title>
-    <!-- Importando o CSS externo -->
     <link rel="stylesheet" href="style.css">
-    <!-- Biblioteca do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- Header / Capa -->
-    <header>
+    <!-- Header / Capa (Coloque a sua foto como 'imagem1.jpg') -->
+    <header style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('imagem1.jpg') center/cover no-repeat;">
         <span>Podologia & Bem-estar</span>
         <h1>Espaço dos Pés<br>& Podologia</h1>
         <p>Cuidado, saúde e leveza para os seus pés.</p>
@@ -60,18 +58,18 @@
         </div>
     </section>
 
-    <!-- Galeria / Trabalhos -->
+    <!-- Galeria / Trabalhos (Coloque as fotos como 'imagem2.jpg' e 'imagem3.jpg') -->
     <section class="section">
         <div class="section-subtitle">Resultados</div>
         <h2 class="section-title">Nossos trabalhos</h2>
 
         <div class="gallery-grid">
             <div class="gallery-card">
-                <img src="https://images.unsplash.com/photo-1519415387717-a9862fe59621?auto=format&fit=crop&w=600&q=80" alt="Pés renovados">
+                <img src="imagem2.jpg" alt="Pés renovados">
                 <p>Pés renovados após podologia completa</p>
             </div>
             <div class="gallery-card">
-                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="Spa com pétalas">
+                <img src="imagem3.jpg" alt="Spa com pétalas">
                 <p>Ritual de spa dos pés com pétalas</p>
             </div>
         </div>
@@ -151,7 +149,6 @@
                             <span class="day-name">qui</span>
                             <span class="day-name">sex</span>
                             <span class="day-name">sáb</span>
-                            <!-- Dias do mês -->
                             <span class="calendar-day disabled">1</span><span class="calendar-day disabled">2</span><span class="calendar-day disabled">3</span><span class="calendar-day disabled">4</span><span class="calendar-day disabled">5</span><span class="calendar-day disabled">6</span><span class="calendar-day disabled">7</span>
                             <span class="calendar-day disabled">8</span><span class="calendar-day disabled">9</span><span class="calendar-day disabled">10</span><span class="calendar-day disabled">11</span><span class="calendar-day disabled">12</span><span class="calendar-day disabled">13</span><span class="calendar-day disabled">14</span>
                             <span class="calendar-day disabled">15</span><span class="calendar-day disabled">16</span><span class="calendar-day disabled">17</span><span class="calendar-day selected" onclick="mudarData(this, '2026-11-18')">18</span><span class="calendar-day" onclick="mudarData(this, '2026-11-19')">19</span><span class="calendar-day" onclick="mudarData(this, '2026-11-20')">20</span><span class="calendar-day" onclick="mudarData(this, '2026-11-21')">21</span>
@@ -163,9 +160,7 @@
 
                 <div class="form-group">
                     <label>Horários disponíveis</label>
-                    <div class="time-slots" id="gradeHorarios">
-                        <!-- Gerado dinamicamente via JS verificando o Supabase -->
-                    </div>
+                    <div class="time-slots" id="gradeHorarios"></div>
                 </div>
 
                 <button type="submit" class="btn-submit" id="btnConfirmar">Confirmar agendamento</button>
@@ -173,7 +168,6 @@
         </div>
     </div>
 
-    <!-- Importando o JavaScript externo -->
     <script src="script.js"></script>
 </body>
 </html>

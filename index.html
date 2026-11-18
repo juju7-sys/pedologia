@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espaço dos Pés & Podologia</title>
+    <!-- Importando o CSS externo -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Header / Capa -->
+    <header>
+        <span>Podologia & Bem-estar</span>
+        <h1>Espaço dos Pés<br>& Podologia</h1>
+        <p>Cuidado, saúde e leveza para os seus pés.</p>
+        <div class="location">📍 Nova Iguaçu, Rio de Janeiro</div>
+        <button class="btn-primary" onclick="abrirModal()">Agende seu momento ↗</button>
+    </header>
+
+    <!-- Serviços & Valores -->
+    <section class="section">
+        <div class="section-subtitle">Serviços & Valores</div>
+        <h2 class="section-title">Cuidados para os seus pés</h2>
+
+        <div class="service-category">Podologia</div>
+        <div class="service-item">
+            <span>Podologia Completa</span>
+            <span class="service-price">R$ 120</span>
+        </div>
+        <div class="service-item">
+            <span>Remoção de Calos e Calosidades</span>
+            <span class="service-price">R$ 90</span>
+        </div>
+        <div class="service-item">
+            <span>Tratamento para Unha Encravada</span>
+            <span class="service-price">R$ 110</span>
+        </div>
+
+        <div class="service-category">Bem-estar</div>
+        <div class="service-item">
+            <span>Spa dos Pés</span>
+            <span class="service-price">R$ 140</span>
+        </div>
+        <div class="service-item">
+            <span>Reflexologia Podal</span>
+            <span class="service-price">R$ 100</span>
+        </div>
+
+        <div class="service-category">Estética</div>
+        <div class="service-item">
+            <span>Pedicure Profissional</span>
+            <span class="service-price">R$ 60</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="btn-primary" onclick="abrirModal()">Agende seu momento ↗</button>
+        </div>
+    </section>
+
+    <!-- Galeria / Trabalhos -->
+    <section class="section">
+        <div class="section-subtitle">Resultados</div>
+        <h2 class="section-title">Nossos trabalhos</h2>
+
+        <div class="gallery-grid">
+            <div class="gallery-card">
+                <img src="https://images.unsplash.com/photo-1519415387717-a9862fe59621?auto=format&fit=crop&w=600&q=80" alt="Pés renovados">
+                <p>Pés renovados após podologia completa</p>
+            </div>
+            <div class="gallery-card">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="Spa com pétalas">
+                <p>Ritual de spa dos pés com pétalas</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="https://instagram.com" target="_blank" class="btn-outline">📸 Veja mais no Instagram ↗</a>
+        </div>
+    </section>
+
+    <!-- Endereço -->
+    <section class="section">
+        <div class="section-subtitle">Endereço</div>
+        <h2 class="section-title">Venha nos visitar</h2>
+        <div class="address-box">
+            <p>Rua Otávio Moreira de Melo, 15<br>Nova Iguaçu - RJ</p>
+            <a href="https://maps.google.com" target="_blank" class="btn-outline">📍 Como chegar ↗</a>
+            <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="abrirModal()">Agende seu momento ↗</button>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <p><strong>Espaço dos Pés & Podologia</strong></p>
+        <p>📸 @espacodospes</p>
+        <p>© 2026 · Nova Iguaçu, RJ</p>
+    </footer>
+
+    <!-- MODAL DE AGENDAMENTO -->
+    <div class="modal-overlay" id="modalAgendamento">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <span style="font-size: 11px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase;">Agendamento</span>
+                    <h3>Agende seu momento</h3>
+                </div>
+                <button class="close-modal" onclick="fecharModal()">×</button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Escolha o cuidado, a data e o horário ideal.</p>
+
+            <form id="formAgendamentoSupabase">
+                <div class="form-group">
+                    <label>Procedimento</label>
+                    <select id="procedimento" class="form-control" required>
+                        <option value="" disabled selected>Selecione o procedimento</option>
+                        <option value="Podologia Completa">Podologia Completa - R$ 120</option>
+                        <option value="Remoção de Calos e Calosidades">Remoção de Calos e Calosidades - R$ 90</option>
+                        <option value="Tratamento para Unha Encravada">Tratamento para Unha Encravada - R$ 110</option>
+                        <option value="Spa dos Pés">Spa dos Pés - R$ 140</option>
+                        <option value="Reflexologia Podal">Reflexologia Podal - R$ 100</option>
+                        <option value="Pedicure Profissional">Pedicure Profissional - R$ 60</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome completo</label>
+                    <input type="text" id="nomeCliente" class="form-control" placeholder="Seu nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>WhatsApp</label>
+                    <input type="tel" id="whatsappCliente" class="form-control" placeholder="21999999999" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <div class="calendar-box">
+                        <div class="calendar-nav">
+                            <span>‹</span>
+                            <span>novembro 2026</span>
+                            <span>›</span>
+                        </div>
+                        <div class="calendar-grid">
+                            <span class="day-name">dom</span>
+                            <span class="day-name">seg</span>
+                            <span class="day-name">ter</span>
+                            <span class="day-name">qua</span>
+                            <span class="day-name">qui</span>
+                            <span class="day-name">sex</span>
+                            <span class="day-name">sáb</span>
+                            <!-- Dias do mês -->
+                            <span class="calendar-day disabled">1</span><span class="calendar-day disabled">2</span><span class="calendar-day disabled">3</span><span class="calendar-day disabled">4</span><span class="calendar-day disabled">5</span><span class="calendar-day disabled">6</span><span class="calendar-day disabled">7</span>
+                            <span class="calendar-day disabled">8</span><span class="calendar-day disabled">9</span><span class="calendar-day disabled">10</span><span class="calendar-day disabled">11</span><span class="calendar-day disabled">12</span><span class="calendar-day disabled">13</span><span class="calendar-day disabled">14</span>
+                            <span class="calendar-day disabled">15</span><span class="calendar-day disabled">16</span><span class="calendar-day disabled">17</span><span class="calendar-day selected" onclick="mudarData(this, '2026-11-18')">18</span><span class="calendar-day" onclick="mudarData(this, '2026-11-19')">19</span><span class="calendar-day" onclick="mudarData(this, '2026-11-20')">20</span><span class="calendar-day" onclick="mudarData(this, '2026-11-21')">21</span>
+                            <span class="calendar-day" onclick="mudarData(this, '2026-11-22')">22</span><span class="calendar-day" onclick="mudarData(this, '2026-11-23')">23</span><span class="calendar-day" onclick="mudarData(this, '2026-11-24')">24</span><span class="calendar-day" onclick="mudarData(this, '2026-11-25')">25</span><span class="calendar-day" onclick="mudarData(this, '2026-11-26')">26</span><span class="calendar-day" onclick="mudarData(this, '2026-11-27')">27</span><span class="calendar-day" onclick="mudarData(this, '2026-11-28')">28</span>
+                            <span class="calendar-day" onclick="mudarData(this, '2026-11-29')">29</span><span class="calendar-day" onclick="mudarData(this, '2026-11-30')">30</span><span class="calendar-day disabled">1</span><span class="calendar-day disabled">2</span><span class="calendar-day disabled">3</span><span class="calendar-day disabled">4</span><span class="calendar-day disabled">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Horários disponíveis</label>
+                    <div class="time-slots" id="gradeHorarios">
+                        <!-- Gerado dinamicamente via JS verificando o Supabase -->
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnConfirmar">Confirmar agendamento</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Importando o JavaScript externo -->
+    <script src="script.js"></script>
+</body>
+</html>

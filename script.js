@@ -1,137 +1,77 @@
-// Credenciais oficiais do Supabase
-const SUPABASE_URL = 'https://uxwudralertyohnwcgj.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ADjn65Fdf72YQIU4ivP0sQ_HG8Yw...'; // Insira a chave completa se necessário
+// ==========================================
+// CONFIGURAÇÃO DO SUPABASE (Ajuste se necessário)
+// ==========================================
+const SUPABASE_URL = 'SUA_URL_DO_SUPABASE_AQUI';
+const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE_AQUI';
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+// Inicializa o cliente do Supabase
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let dataSelecionada = '2026-11-18'; // Data padrão inicial
-let horarioSelecionado = '';
+document.addEventListener('DOMContentLoaded', function() {
+    const formAgendamento = document.getElementById('formAgendamento');
+    
+    if (formAgendamento) {
+        formAgendamento.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-// Horários-padrão de atendimento do dia
-const horariosFixos = ['09:00', '10:30', '13:00', '14:30', '16:00', '17:30'];
+            const procedimento = document.getElementById('procedimento').value;
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const data = document.getElementById('data').value;
+            const horario = document.getElementById('horario').value;
 
-function abrirModal() {
-    document.getElementById('modalAgendamento').classList.add('active');
-    carregarHorariosOcupados();
-}
+            if (!procedimento || !nome || !telefone || !data || !horario) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
 
-function fecharModal() {
-    document.getElementById('modalAgendamento').classList.remove('active');
-}
+            try {
+                // 1. Verifica se já existe agendamento para essa data e horário (Anti-duplicidade)
+                const { data: existente, error: erroBusca } = await supabaseClient
+                    .from('agendamentos')
+                    .id('id')
+                    .eq('data', data)
+                    .eq('horario', horario);
 
-function mudarData(elemento, novaData) {
-    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
-    elemento.classList.add('selected');
-    dataSelecionada = novaData;
-    horarioSelecionado = '';
-    carregarHorariosOcupados(); // Consulta o Supabase para ver o que já está ocupado nesta data
-}
+                if (erroBusca) throw erroBusca;
 
-// Função fundamental para verificar no Supabase os horários já reservados
-async function carregarHorariosOcupados() {
-    const containerHorarios = document.getElementById('gradeHorarios');
-    containerHorarios.innerHTML = '<p style="grid-column: span 3; text-align: center; font-size: 12px; color: #6b7c73;">Verificando vagas disponíveis...</p>';
+                if (existente && existente.length > 0) {
+                    alert('⚠️ Este horário já foi reservado por outra cliente. Por favor, escolha outro horário ou dia.');
+                    return;
+                }
 
-    // Busca no Supabase todos os agendamentos salvos para a data escolhida
-    const { data: agendamentos, error } = await supabaseClient
-        .from('agendamentos')
-        .select('data_hora')
-        .ilike('data_hora', `${dataSelecionada}%`);
+                // 2. Insere o novo agendamento no Supabase
+                const { data: inserido, error: erroInsercao } = await supabaseClient
+                    .from('agendamentos')
+                    .insert([
+                        { procedimento, nome, telefone, data, horario, status: 'confirmado' }
+                    ]);
 
-    let horariosOcupados = [];
-    if (!error && agendamentos) {
-        // Extrai apenas o horário (ex: "14:30") das datas cadastradas no banco
-        horariosOcupados = agendamentos.map(item => {
-            return item.data_hora.split(' ')[1].substring(0, 5);
+                if (erroInsercao) throw erroInsercao;
+
+                // 3. Exibe a tela de confirmação limpa para a cliente
+                const containerPrincipal = formAgendamento.closest('section') || formAgendamento.parentElement;
+                containerPrincipal.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 500px; margin: 0 auto;">
+                        <div style="font-size: 50px; margin-bottom: 15px;">✅</div>
+                        <h3 style="color: #2c3e50; margin-bottom: 15px; font-family: serif; font-size: 24px;">Agendamento Confirmado!</h3>
+                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+                            Obrigada, <strong>${nome}</strong>! Seu horário para <strong>${procedimento}</strong> foi reservado com sucesso.
+                        </p>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px; display: inline-block; text-align: left;">
+                            <p style="margin: 5px 0; color: #444;">📅 <strong>Data:</strong> ${data.split('-').reverse().join('/')}</p>
+                            <p style="margin: 5px 0; color: #444;">⏰ <strong>Horário:</strong> ${horario}</p>
+                        </div>
+                        <br>
+                        <button onclick="window.location.reload()" style="background: #6b8e23; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 15px; cursor: pointer; font-weight: bold;">Fazer Novo Agendamento</button>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao realizar agendamento: ' + err.message);
+            }
         });
     }
+});
 
-    // Monta os botões na tela bloqueando os que já foram pegos
-    containerHorarios.innerHTML = '';
-    horariosFixos.forEach(horario => {
-        const div = document.createElement('div');
-        div.classList.add('time-slot');
-        div.textContent = horario;
-
-        if (horariosOcupados.includes(horario)) {
-            // Se já foi reservado por alguém, fica desativado e tachado
-            div.classList.add('ocupado');
-            div.title = 'Este horário já foi reservado';
-        } else {
-            div.onclick = function() {
-                document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
-                div.classList.add('selected');
-                horarioSelecionado = horario;
-            };
-        }
-        containerHorarios.appendChild(div);
-    });
-}
-
-function selecionarHorario(elemento, horario) {
-    document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
-    elemento.classList.add('selected');
-    horarioSelecionado = horario;
-}
-
-// Envio do formulário para salvar a vaga no Supabase com segurança
-const form = document.getElementById('formAgendamentoSupabase');
-if (form) {
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const procedimento = document.getElementById('procedimento').value;
-        const nome = document.getElementById('nomeCliente').value;
-        const telefone = document.getElementById('whatsappCliente').value;
-
-        if (!horarioSelecionado) {
-            alert('Por favor, selecione um horário disponível.');
-            return;
-        }
-
-        const dataHoraCompleta = `${dataSelecionada} ${horarioSelecionado}:00`;
-
-        const btn = document.getElementById('btnConfirmar');
-        btn.textContent = 'Salvando agendamento...';
-        btn.disabled = true;
-
-        // Dupla checagem antes de salvar para evitar conflito caso alguém pegue o horário no mesmo segundo
-        const { data: checagem } = await supabaseClient
-            .from('agendamentos')
-            .select('*')
-            .eq('data_hora', dataHoraCompleta);
-
-        if (checagem && checagem.length > 0) {
-            alert('Ops! Este horário acabou de ser reservado por outra pessoa. Por favor, escolha outro.');
-            btn.textContent = 'Confirmar agendamento';
-            btn.disabled = false;
-            carregarHorariosOcupados();
-            return;
-        }
-
-        // Salva na tabela do Supabase
-        const { error } = await supabaseClient
-            .from('agendamentos')
-            .insert([
-                { 
-                    nome: nome, 
-                    telefone: telefone, 
-                    data_hora: dataHoraCompleta 
-                }
-            ]);
-
-        if (error) {
-            console.error('Erro ao salvar:', error);
-            alert('Erro ao realizar agendamento: ' + error.message);
-            btn.textContent = 'Confirmar agendamento';
-            btn.disabled = false;
-        } else {
-            alert('Agendamento realizado com sucesso! Sua vaga está garantida.');
-            form.reset();
-            fecharModal();
-            btn.textContent = 'Confirmar agendamento';
-            btn.disabled = false;
-            horarioSelecionado = '';
-        }
-    });
-}

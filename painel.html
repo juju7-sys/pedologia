@@ -3,123 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Agendamentos - Espaço dos Pés</title>
+    <title>Painel da Profissional - Espaço dos Pés</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Biblioteca do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .painel-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .agendamento-card {
-            background: var(--white);
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 4px solid var(--sage-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .agendamento-info h4 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            color: var(--text-main);
-        }
-        .agendamento-info p {
-            margin: 0;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        .data-badge {
-            background: var(--sage-light);
-            color: var(--sage-dark);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-        }
+        body { background-color: #f4f6f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        .painel-container { max-width: 900px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h2 { color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tabela-agendamentos { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .tabela-agendamentos th, .tabela-agendamentos td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        .tabela-agendamentos th { background-color: #f8f9fa; color: #333; }
+        .btn-acao { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-acao:hover { background: #c0392b; }
+        #loginBox, #painelBox { display: none; }
+        .input-login { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn-login { background: #6b8e23; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="painel-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <span class="section-subtitle" style="text-align: left; display: block;">Administração</span>
-                <h2 style="font-family: serif; margin: 0; font-size: 24px;">Agendamentos</h2>
-            </div>
-            <button onclick="sair()" class="btn-outline" style="width: auto; padding: 8px 16px; margin: 0; font-size: 13px;">Sair ↗</button>
+        <!-- TELA DE LOGIN DA PROFISSIONAL -->
+        <div id="loginBox">
+            <h2>🔐 Acesso Restrito - Profissional</h2>
+            <p style="color: #666; font-size: 14px;">Digite o e-mail e a senha cadastrados para acessar o painel de controle.</p>
+            <form id="formLogin">
+                <label>E-mail:</label>
+                <input type="email" id="emailLogin" class="input-login" required placeholder="exemplo@email.com">
+                
+                <label>Senha:</label>
+                <input type="password" id="senhaLogin" class="input-login" required placeholder="Sua senha">
+                
+                <button type="submit" class="btn-login" style="margin-top: 15px;">Entrar no Painel</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;"><a href="index.html" style="color: #6b8e23; text-decoration: none; font-size: 13px;">← Voltar para o site principal</a></p>
         </div>
 
-        <div id="listaAgendamentos">
-            <p style="text-align: center; color: var(--text-muted);">Carregando agendamentos...</p>
+        <!-- PAINEL DE GESTÃO (APÓS LOGIN) -->
+        <div id="painelBox">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>📋 Lista de Agendamentos</h2>
+                <button onclick="sairPainel()" style="background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">Sair</button>
+            </div>
+            <p style="color: #666; font-size: 14px;">Aqui estão todas as marcações feitas pelas clientes no site.</p>
+            
+            <div style="overflow-x: auto;">
+                <table class="tabela-agendamentos">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Telefone (WhatsApp)</th>
+                            <th>Procedimento</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaAgendamentos">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #777;">Carregando agendamentos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 25px;"><a href="index.html" style="color: #6b8e23; text-decoration: none; font-size: 13px;">← Voltar para o site principal</a></p>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://uxwudralertyohnwcgj.supabase.co';
-        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ADjn65Fdf72YQIU4ivP0sQ_HG8Yw...';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        // CONFIGURAÇÃO DO SUPABASE (Mesmas chaves)
+        const SUPABASE_URL = 'SUA_URL_DO_SUPABASE_AQUI';
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE_AQUI';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Verifica se a profissional está logada
-        async function verificarSessao() {
+        const loginBox = document.getElementById('loginBox');
+        const painelBox = document.getElementById('painelBox');
+        const formLogin = document.getElementById('formLogin');
+
+        // Verifica se já está logada na sessão atual do navegador
+        window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) {
-                // Se não estiver logada, manda de volta para a tela de login
-                window.location.href = 'login.html';
+            if (session) {
+                mostrarPainel();
             } else {
-                carregarListaAgendamentos();
+                loginBox.style.display = 'block';
             }
+        });
+
+        // Ação de Login
+        formLogin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailLogin').value;
+            const password = document.getElementById('senhaLogin').value;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert('Erro ao entrar: E-mail ou senha incorretos.');
+            } else {
+                mostrarPainel();
+            }
+        });
+
+        async function mostrarPainel() {
+            loginBox.style.display = 'none';
+            painelBox.style.display = 'block';
+            carregarAgendamentos();
         }
 
-        async function carregarListaAgendamentos() {
-            const container = document.getElementById('listaAgendamentos');
+        async function carregarAgendamentos() {
+            const tbody = document.getElementById('listaAgendamentos');
             
-            // Busca todos os agendamentos no banco ordenados por data/hora
             const { data, error } = await supabaseClient
                 .from('agendamentos')
                 .select('*')
-                .order('data_hora', { ascending: true });
+                .order('data', { ascending: true })
+                .order('horario', { ascending: true });
 
             if (error) {
-                container.innerHTML = '<p style="text-align: center; color: red;">Erro ao carregar agendamentos.</p>';
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Nenhum agendamento cadastrado no momento.</p>';
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #777;">Nenhum agendamento encontrado no momento.</td></tr>`;
                 return;
             }
 
-            container.innerHTML = '';
+            tbody.innerHTML = '';
             data.forEach(item => {
-                const card = document.createElement('div');
-                card.classList.add('agendamento-card');
-
-                card.innerHTML = `
-                    <div class="agendamento-info">
-                        <h4>${item.nome}</h4>
-                        <p>📱 WhatsApp: ${item.telefone}</p>
-                    </div>
-                    <div class="data-badge">${item.data_hora}</div>
+                const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.nome}</strong></td>
+                        <td><a href="https://wa.me/55${item.telefone.replace(/\D/g,'')}" target="_blank" style="color: #27ae60; text-decoration: none;">${item.telefone} 💬</a></td>
+                        <td>${item.procedimento}</td>
+                        <td>${dataFormatada}</td>
+                        <td>${item.horario}</td>
+                        <td><button class="btn-acao" onclick="cancelarAgendamento('${item.id}')">Excluir</button></td>
+                    </tr>
                 `;
-                container.appendChild(card);
             });
         }
 
-        async function sair() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'login.html';
+        // Função para cancelar/excluir um agendamento direto pelo painel
+        async function cancelarAgendamento(id) {
+            if (confirm('Tem certeza que deseja cancelar e excluir este agendamento? O horário ficará livre novamente.')) {
+                const { error } = await supabaseClient
+                    .from('agendamentos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert('Erro ao excluir: ' + error.message);
+                } else {
+                    carregarAgendamentos();
+                }
+            }
         }
 
-        // Executa a verificação ao abrir a página
-        verificarSessao();
+        async function sairPainel() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
     </script>
 </body>
 </html>

@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espaço dos Pés & Podologia</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- Header / Capa (Coloque a sua foto como 'imagem1.jpg') -->
+    <!-- Header / Capa -->
     <header style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('imagem1.jpg') center/cover no-repeat;">
         <span>Podologia & Bem-estar</span>
         <h1>Espaço dos Pés<br>& Podologia</h1>
         <p>Cuidado, saúde e leveza para os seus pés.</p>
         <div class="location">📍 Nova Iguaçu, Rio de Janeiro</div>
-        <button class="btn-primary" onclick="abrirModal()">Agende seu momento ↗</button>
+        <button class="btn-primary" onclick="abrirModal()">Agende seu momento</button>
     </header>
 
     <!-- Serviços & Valores -->
@@ -36,8 +37,6 @@
             <span>Tratamento para Unha Encravada</span>
             <span class="service-price">R$ 110</span>
         </div>
-
-        <div class="service-category">Bem-estar</div>
         <div class="service-item">
             <span>Spa dos Pés</span>
             <span class="service-price">R$ 140</span>
@@ -46,71 +45,18 @@
             <span>Reflexologia Podal</span>
             <span class="service-price">R$ 100</span>
         </div>
-
-        <div class="service-category">Estética</div>
         <div class="service-item">
             <span>Pedicure Profissional</span>
             <span class="service-price">R$ 60</span>
         </div>
-
-        <div style="text-align: center; margin-top: 40px;">
-            <button class="btn-primary" onclick="abrirModal()">Agende seu momento ↗</button>
-        </div>
     </section>
 
-    <!-- Galeria / Trabalhos (Coloque as fotos como 'imagem2.jpg' e 'imagem3.jpg') -->
-    <section class="section">
-        <div class="section-subtitle">Resultados</div>
-        <h2 class="section-title">Nossos trabalhos</h2>
-
-        <div class="gallery-grid">
-            <div class="gallery-card">
-                <img src="imagem2.jpg" alt="Pés renovados">
-                <p>Pés renovados após podologia completa</p>
-            </div>
-            <div class="gallery-card">
-                <img src="imagem3.jpg" alt="Spa com pétalas">
-                <p>Ritual de spa dos pés com pétalas</p>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="https://instagram.com" target="_blank" class="btn-outline">📸 Veja mais no Instagram ↗</a>
-        </div>
-    </section>
-
-    <!-- Endereço -->
-    <section class="section">
-        <div class="section-subtitle">Endereço</div>
-        <h2 class="section-title">Venha nos visitar</h2>
-        <div class="address-box">
-            <p>Rua Otávio Moreira de Melo, 15<br>Nova Iguaçu - RJ</p>
-            <a href="https://maps.google.com" target="_blank" class="btn-outline">📍 Como chegar ↗</a>
-            <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="abrirModal()">Agende seu momento ↗</button>
-        </div>
-    </section>
-
-<!-- Rodapé -->
-    <footer>
-        <p><strong>Espaço dos Pés & Podologia</strong></p>
-        <p>📸 @espacodospes</p>
-        <p>© 2026 · Nova Iguaçu, RJ</p>
-        <p style="margin-top: 15px;"><a href="login.html" style="color: var(--text-muted); font-size: 12px; text-decoration: none;">Acesso da Profissional ↗</a></p>
-    </footer>
-
-    
-    <!-- MODAL DE AGENDAMENTO -->
-    <div class="modal-overlay" id="modalAgendamento">
+    <!-- Seção de Agendamento (Modal) -->
+    <div id="modalAgendamento" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <span style="font-size: 11px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase;">Agendamento</span>
-                    <h3>Agende seu momento</h3>
-                </div>
-                <button class="close-modal" onclick="fecharModal()">×</button>
-            </div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Escolha o cuidado, a data e o horário ideal.</p>
-
+            <button class="btn-fechar" onclick="fecharModal()">×</button>
+            <h3>Faça seu Agendamento</h3>
+            
             <form id="formAgendamento">
                 <div class="form-group">
                     <label>Procedimento</label>
@@ -127,48 +73,56 @@
 
                 <div class="form-group">
                     <label>Nome completo</label>
-                    <input type="text" id="nomeCliente" class="form-control" placeholder="Seu nome" required>
+                    <input type="text" id="nome" class="form-control" required placeholder="Seu nome">
                 </div>
 
                 <div class="form-group">
-                    <label>WhatsApp</label>
-                    <input type="tel" id="whatsappCliente" class="form-control" placeholder="21999999999" required>
+                    <label>Telefone / WhatsApp</label>
+                    <input type="text" id="telefone" class="form-control" required placeholder="(21) 99999-9999">
                 </div>
 
                 <div class="form-group">
-                    <label>Data</label>
-                    <div class="calendar-box">
-                        <div class="calendar-nav">
-                            <span>‹</span>
-                            <span>novembro 2026</span>
-                            <span>›</span>
-                        </div>
-                        <div class="calendar-grid">
-                            <span class="day-name">dom</span>
-                            <span class="day-name">seg</span>
-                            <span class="day-name">ter</span>
-                            <span class="day-name">qua</span>
-                            <span class="day-name">qui</span>
-                            <span class="day-name">sex</span>
-                            <span class="day-name">sáb</span>
-                            <span class="calendar-day disabled">1</span><span class="calendar-day disabled">2</span><span class="calendar-day disabled">3</span><span class="calendar-day disabled">4</span><span class="calendar-day disabled">5</span><span class="calendar-day disabled">6</span><span class="calendar-day disabled">7</span>
-                            <span class="calendar-day disabled">8</span><span class="calendar-day disabled">9</span><span class="calendar-day disabled">10</span><span class="calendar-day disabled">11</span><span class="calendar-day disabled">12</span><span class="calendar-day disabled">13</span><span class="calendar-day disabled">14</span>
-                            <span class="calendar-day disabled">15</span><span class="calendar-day disabled">16</span><span class="calendar-day disabled">17</span><span class="calendar-day selected" onclick="mudarData(this, '2026-11-18')">18</span><span class="calendar-day" onclick="mudarData(this, '2026-11-19')">19</span><span class="calendar-day" onclick="mudarData(this, '2026-11-20')">20</span><span class="calendar-day" onclick="mudarData(this, '2026-11-21')">21</span>
-                            <span class="calendar-day" onclick="mudarData(this, '2026-11-22')">22</span><span class="calendar-day" onclick="mudarData(this, '2026-11-23')">23</span><span class="calendar-day" onclick="mudarData(this, '2026-11-24')">24</span><span class="calendar-day" onclick="mudarData(this, '2026-11-25')">25</span><span class="calendar-day" onclick="mudarData(this, '2026-11-26')">26</span><span class="calendar-day" onclick="mudarData(this, '2026-11-27')">27</span><span class="calendar-day" onclick="mudarData(this, '2026-11-28')">28</span>
-                            <span class="calendar-day" onclick="mudarData(this, '2026-11-29')">29</span><span class="calendar-day" onclick="mudarData(this, '2026-11-30')">30</span><span class="calendar-day disabled">1</span><span class="calendar-day disabled">2</span><span class="calendar-day disabled">3</span><span class="calendar-day disabled">4</span><span class="calendar-day disabled">5</span>
-                        </div>
-                    </div>
+                    <label>Data desejada</label>
+                    <input type="date" id="data" class="form-control" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Horários disponíveis</label>
-                    <div class="time-slots" id="gradeHorarios"></div>
+                    <label>Horário disponível</label>
+                    <select id="horario" class="form-control" required>
+                        <option value="">Selecione um horário</option>
+                        <option value="08:00">08:00</option>
+                        <option value="08:30">08:30</option>
+                        <option value="09:00">09:00</option>
+                        <option value="09:30">09:30</option>
+                        <option value="10:00">10:00</option>
+                        <option value="10:30">10:30</option>
+                        <option value="11:00">11:00</option>
+                        <option value="11:30">11:30</option>
+                        <!-- Almoço das 11:30 às 13:00 -->
+                        <option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option>
+                        <option value="14:00">14:00</option>
+                        <option value="14:30">14:30</option>
+                        <option value="15:00">15:00</option>
+                        <option value="15:30">15:30</option>
+                        <option value="16:00">16:00</option>
+                        <option value="16:30">16:30</option>
+                        <option value="17:00">17:00</option>
+                        <option value="17:30">17:30</option>
+                        <option value="18:00">18:00</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="btn-submit" id="btnConfirmar">Confirmar agendamento</button>
             </form>
         </div>
     </div>
+
+    <!-- Rodapé com acesso à profissional -->
+    <footer style="text-align: center; padding: 30px; background: #2c3e50; color: white; margin-top: 40px;">
+        <p>© 2026 Espaço dos Pés & Podologia. Todos os direitos reservados.</p>
+        <p style="margin-top: 10px;"><a href="painel.html" style="color: #a8d5ba; font-size: 13px; text-decoration: none;">🔐 Acesso Restrito (Profissional)</a></p>
+    </footer>
 
     <script src="script.js"></script>
 </body>

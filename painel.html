@@ -5,65 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel da Profissional - Espaço dos Pés</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Biblioteca do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #f4f6f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
-        .painel-container { max-width: 900px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        h2 { color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .tabela-agendamentos { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .tabela-agendamentos th, .tabela-agendamentos td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
-        .tabela-agendamentos th { background-color: #f8f9fa; color: #333; }
+        body { background-color: #f4f6f8; padding: 20px; }
+        .painel-container { max-width: 900px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h2 { color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tabela { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .tabela th, .tabela td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        .tabela th { background-color: #f8f9fa; }
         .btn-acao { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-acao:hover { background: #c0392b; }
         #loginBox, #painelBox { display: none; }
-        .input-login { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn-login { background: #6b8e23; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+        .input-box { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn-entrar { background: #6b8e23; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+        .bloco-folga { background: #fff3f3; padding: 15px; border-radius: 8px; border: 1px solid #ffcccc; margin-bottom: 25px; }
     </style>
 </head>
 <body>
 
     <div class="painel-container">
-        <!-- TELA DE LOGIN DA PROFISSIONAL -->
+        <!-- TELA DE LOGIN -->
         <div id="loginBox">
             <h2>🔐 Acesso Restrito - Profissional</h2>
-            <p style="color: #666; font-size: 14px;">Digite o e-mail e a senha cadastrados para acessar o painel de controle.</p>
+            <p style="color: #666; font-size: 14px;">Entre com seu e-mail e senha para gerenciar o salão.</p>
             <form id="formLogin">
                 <label>E-mail:</label>
-                <input type="email" id="emailLogin" class="input-login" required placeholder="exemplo@email.com">
+                <input type="email" id="emailLogin" class="input-box" required placeholder="seu@email.com">
                 
                 <label>Senha:</label>
-                <input type="password" id="senhaLogin" class="input-login" required placeholder="Sua senha">
+                <input type="password" id="senhaLogin" class="input-box" required placeholder="Sua senha">
                 
-                <button type="submit" class="btn-login" style="margin-top: 15px;">Entrar no Painel</button>
+                <button type="submit" class="btn-entrar" style="margin-top: 10px;">Entrar no Painel</button>
             </form>
             <p style="margin-top: 20px; text-align: center;"><a href="index.html" style="color: #6b8e23; text-decoration: none; font-size: 13px;">← Voltar para o site principal</a></p>
         </div>
 
-        <!-- PAINEL DE GESTÃO (APÓS LOGIN) -->
+        <!-- PAINEL ADMINISTRATIVO -->
         <div id="painelBox">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>📋 Lista de Agendamentos</h2>
+                <h2>📋 Gestão de Agendamentos</h2>
                 <button onclick="sairPainel()" style="background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">Sair</button>
             </div>
-            <p style="color: #666; font-size: 14px;">Aqui estão todas as marcações feitas pelas clientes no site.</p>
-            
+
+            <!-- FERRAMENTA DE FOLGA (DIA INTEIRO) -->
+            <div class="bloco-folga">
+                <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #c0392b;">🏖️ Gerenciamento de Folgas (Dia Inteiro)</h3>
+                <p style="font-size: 13px; color: #555; margin-bottom: 10px;">Selecione um dia em que você não vai trabalhar para bloquear novos agendamentos:</p>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="date" id="dataFolga" class="input-box" style="margin: 0; max-width: 200px;">
+                    <button onclick="cadastrarFolga()" style="background: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px;">Bloquear Dia (Folga)</button>
+                </div>
+            </div>
+
+            <h3>Lista de Horários Reservados pelas Clientes</h3>
             <div style="overflow-x: auto;">
-                <table class="tabela-agendamentos">
+                <table class="tabela">
                     <thead>
                         <tr>
                             <th>Cliente</th>
-                            <th>Telefone (WhatsApp)</th>
+                            <th>WhatsApp</th>
                             <th>Procedimento</th>
                             <th>Data</th>
                             <th>Horário</th>
-                            <th>Ações</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody id="listaAgendamentos">
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: #777;">Carregando agendamentos...</td>
-                        </tr>
+                        <tr><td colspan="6" style="text-align: center; color: #777;">Carregando agendamentos...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -72,7 +80,6 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO SUPABASE (Mesmas chaves)
         const SUPABASE_URL = 'SUA_URL_DO_SUPABASE_AQUI';
         const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE_AQUI';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -81,7 +88,6 @@
         const painelBox = document.getElementById('painelBox');
         const formLogin = document.getElementById('formLogin');
 
-        // Verifica se já está logada na sessão atual do navegador
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -91,16 +97,14 @@
             }
         });
 
-        // Ação de Login
         formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('emailLogin').value;
             const password = document.getElementById('senhaLogin').value;
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
-                alert('Erro ao entrar: E-mail ou senha incorretos.');
+                alert('E-mail ou senha incorretos.');
             } else {
                 mostrarPainel();
             }
@@ -114,7 +118,6 @@
 
         async function carregarAgendamentos() {
             const tbody = document.getElementById('listaAgendamentos');
-            
             const { data, error } = await supabaseClient
                 .from('agendamentos')
                 .select('*')
@@ -127,7 +130,7 @@
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #777;">Nenhum agendamento encontrado no momento.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #777;">Nenhum agendamento encontrado.</td></tr>`;
                 return;
             }
 
@@ -147,19 +150,30 @@
             });
         }
 
-        // Função para cancelar/excluir um agendamento direto pelo painel
         async function cancelarAgendamento(id) {
             if (confirm('Tem certeza que deseja cancelar e excluir este agendamento? O horário ficará livre novamente.')) {
-                const { error } = await supabaseClient
-                    .from('agendamentos')
-                    .delete()
-                    .eq('id', id);
-
+                const { error } = await supabaseClient.from('agendamentos').delete().eq('id', id);
                 if (error) {
                     alert('Erro ao excluir: ' + error.message);
                 } else {
                     carregarAgendamentos();
                 }
+            }
+        }
+
+        async function cadastrarFolga() {
+            const dataFolga = document.getElementById('dataFolga').value;
+            if (!dataFolga) {
+                alert('Selecione uma data para a folga!');
+                return;
+            }
+
+            const { error } = await supabaseClient.from('bloqueios').insert([{ data: dataFolga }]);
+            if (error) {
+                alert('Erro ao registrar folga: ' + error.message);
+            } else {
+                alert(`✅ Dia ${dataFolga.split('-').reverse().join('/')} bloqueado com sucesso como folga!`);
+                document.getElementById('dataFolga').value = '';
             }
         }
 
